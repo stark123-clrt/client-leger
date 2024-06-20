@@ -1,4 +1,4 @@
-(function ($) {
-  'use strict';
-  new ClipboardJS('.btn-clipboard');
+(function ($) {
+  'use strict';
+  new ClipboardJS('.btn-clipboard');
 })(jQuery);

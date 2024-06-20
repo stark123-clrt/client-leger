@@ -32,114 +32,119 @@ if(isset($_GET["idcategorie"])){
     $tablette = null;
     $accessoire = null;
 }
-if(isset($_POST["search"])){
-    $search = $_POST["search"];
-    $statement = $pdo -> prepare("SELECT * from annonce where titre like :search");
-    $statement -> bindValue(':search', "%$search%", PDO::PARAM_STR);
-    $statement -> execute();
-    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-    $_SESSION["search"] = $result;
-    header("Location: recherche.php");
-}
+// if(isset($_POST["search"])){
+//     $search = $_POST["search"];
+//     $statement = $pdo -> prepare("SELECT * from annonce where titre like :search");
+//     $statement -> bindValue(':search', "%$search%", PDO::PARAM_STR);
+//     $statement -> execute();
+//     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+//     $_SESSION["search"] = $result;
+//     header("Location: recherche.php");
+// }
 
 ?>
 
 <div class="horizontal-menu">
-    <nav class="navbar top-navbar col-lg-12 col-12 p-0">
-        <div class="container">
-            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo" href="index.php"><img style="height: 60px; width: 110px" src="../image/logo2.png" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="index.php"><img style="height: 60px; width: 120px" src="../image/logo.png" alt="logo" /></a>
-                <!-- Logo jale great deal responsive -->
-            </div>
-            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-                <ul class="navbar-nav mr-lg-2">
-                    <li class="nav-item d-none d-lg-block">
-                        <a class="btn btn-success" href="<?php if(isset($uid)): ?>nvAnnonces.php <?php else: ?> connexion.php <?php endif; ?>">
-                            <i class="fa-regular fa-square-plus "></i><span class="menu-title "> Nouvelle Annonce</span>
-                        </a>
-                    </li>
-                    <li class="nav-item nav-search d-none d-lg-block">
-                        <div class="input-group">
+
+
+<?php
+include 'include/element.php';
+
+if (isset($uid)) {
+    $nbAnnonces = $pdo->query("SELECT COUNT(*) FROM annonce WHERE vendeur = $uid")->fetchColumn();
+    $nbFavoris = $pdo->query("SELECT COUNT(*) FROM favoris WHERE idu = $uid")->fetchColumn();
+    $nbMessagesNonLus = $pdo->query("SELECT COUNT(*) FROM message WHERE idu_r = $uid AND lu = 0")->fetchColumn();
+} else {
+    $nbAnnonces = 0;
+    $nbFavoris = 0;
+    $nbMessagesNonLus = 0;
+}
+?>
+
+<nav class="navbar top-navbar col-lg-12 col-12 p-0">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="navbar-brand-wrapper d-flex align-items-center">
+            <a class="navbar-brand brand-logo" href="index.php"><img style="height: 30px; width: 60px" src="../image/logo2.png" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="index.php"><img style="height: 30px; width: 60px" src="../image/logo.png" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+            <ul class="navbar-nav d-flex align-items-center">
+                <li class="nav-item d-none d-lg-block">
+                    <a class="btn btn-success btn-sm mx-2" href="<?php if(isset($uid)): ?>nvAnnonces.php <?php else: ?> connexion.php <?php endif; ?>" style="font-size: 12px;">
+                        <i class="fa-regular fa-square-plus"></i><span class="menu-title"> Nouvelle Annonce</span>
+                    </a>
+                </li>
+                <li class="nav-item nav-search d-none d-lg-block mx-2">
+                  <!--  <div class="input-group input-group-sm">
+                        <form action="" method="post" class="d-flex">
                             <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                      <span class="input-group-text" id="search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                      </span>
+                                <span class="input-group-text" id="search" style="font-size: 12px;">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
                             </div>
-                            <form action="" method="post">
-                                <input type="text" class="form-control" id="navbar-search-input" name="search"  placeholder="Chercher une annonce" placeholder="Rechercher" aria-label="search" aria-describedby="search">
-                            </form>
+                            <input type="text" class="form-control" id="navbar-search-input" name="search" placeholder="Chercher une annonce" aria-label="search" aria-describedby="search" style="font-size: 12px;">
+                        </form>
+                    </div> -->
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right d-flex align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="<?php if(isset($uid)): ?>mesAnnonces.php <?php else: ?>connexion.php <?php endif; ?>" style="font-size: 12px;">
+                        <i class="fa-solid fa-list" style="font-size: 16px;"></i><span class="d-none d-lg-inline"> Mes annonces (<?= $nbAnnonces ?>)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark position-relative" href="<?php if(isset($uid)): ?>favoris.php <?php else: ?>connexion.php <?php endif; ?>" style="font-size: 12px;">
+                        <i class="fa-regular fa-heart" style="font-size: 16px;"></i><span class="d-none d-lg-inline"> Favoris</span>
+                        <?php if($nbFavoris > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $nbFavoris ?></span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark position-relative" href="<?php if(isset($uid)): ?>message.php <?php else: ?>connexion.php <?php endif; ?>" style="font-size: 12px;">
+                        <i class="fa-regular fa-comments" style="font-size: 16px;"></i><span class="d-none d-lg-inline"> Messages</span>
+                        <?php if($nbMessagesNonLus > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $nbMessagesNonLus ?></span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <?php if(isset($uid)): ?>
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
+                            <div class="nav-profile-img">
+                                <img src="<?php if($infoUser["avatar"] == null){ echo "../image/avatarbasique.png";}else{ ?>../<?= $infoUser["avatar"] ?><?php } ?>" alt="image" style="height: 20px; width: 20px;">
+                                <span class="availability-status online"></span>
+                            </div>
+                            <div class="nav-profile-text">
+                                <p class="text-black mb-0" style="font-size: 12px;"><?= $infoUser["prenom"] ?> <?= $infoUser["nom"] ?></p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down mx-1" style="font-size: 12px;"></i>
+                        </a>
+                        <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item" href="profil.php">
+                                <i class="fa-solid fa-user"></i> Profil</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="deconnexion.php">
+                                <i class="fa-solid fa-right-from-bracket"></i> Déconnexion </a>
                         </div>
                     </li>
-                </ul>
-                <ul class="navbar-nav navbar-nav-right">
-
-
-                    <li class="nav-item nav-logout ">
-                        <a class="nav-link text-center text-dark mt-lg-4" href="<?php if(isset($uid)): ?>mesAnnonces.php <?php else: ?>connexion.php <?php endif; ?>">
-                            <i class="fa-solid fa-list"><p  style="font-family: 'Courier New', Courier, monospace" class="d-lg-flex d-none note-icon">Mes annonces</p></i>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="connexion.php" style="font-size: 12px;">
+                            <i class="fa-regular fa-user" style="font-size: 16px;"></i><span class="d-none d-lg-inline"> Connexion</span>
                         </a>
                     </li>
-
-                    <li class="nav-item nav-logout ">
-                        <a class="nav-link text-center text-dark mt-lg-4 count-indicator" href="<?php if(isset($uid)): ?>favoris.php <?php else: ?>connexion.php <?php endif; ?>">
-                            <i class="fa-regular fa-heart fa-4x"><p style="font-family: 'Courier New', Courier, monospace" class="fw-bold d-none d-lg-flex note-icon">Favoris</p></i>
-                            <?php
-                            if(isset($uid)){
-                                $reqNav = $pdo->prepare("SELECT * FROM favoris WHERE idu = ?");
-                                $reqNav->execute(array($uid));
-                                $count = $reqNav->rowCount();
-                                if($count > 0){
-                                    echo "<span class='count-symbol bg-danger'></span>";
-                                }
-                            } ?>
-                        </a>
-                    </li>
-
-                    <li class="nav-item nav-settings ">
-                        <a class="nav-link text-center text-dark mt-lg-4" href="<?php if(isset($uid)): ?>message.php <?php else: ?> connexion.php <?php endif; ?>">
-                            <i class="fa-regular fa-comments"><p style="font-family: 'Courier New', Courier, monospace" class="fw-bold d-none d-lg-flex note-icon">Messages</p></i>
-                        </a>
-                    </li>
-                    <?php if(isset($uid)): ?>
-                        <li class="nav-item nav-profile dropdown">
-
-                            <a class="nav-link " id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="nav-profile-img">
-                                    <img src="<?php if($infoUser["avatar"] == null){ echo "../image/avatarbasique.png";}else{ ?>../<?= $infoUser["avatar"] ?><?php } ?>" alt="image">
-                                    <span class="availability-status online"></span>
-                                </div>
-                                <div class="nav-profile-text">
-                                    <p class="text-black"><?= $infoUser["prenom"] ?> <?= $infoUser["nom"] ?></p>
-                                </div>
-                                <i class="fa-solid fa-chevron-down mx-1"></i>
-                            </a>
-                            <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                                <a class="dropdown-item" href="profil.php">
-                                    <i class="fa-solid fa-user"></i> Profil</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="deconnexion.php">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Déconnexion </a>
-                            </div>
-                        </li>
-
-                    <?php else: ?>
-
-                        <li class="nav-item nav-logout ">
-                            <a class="nav-link text-center text-dark mt-lg-4" href="connexion.php">
-                                <i class="fa-regular fa-user"><br><p style="font-family: 'Courier New', Courier, monospace" class="fw-bold d-none d-lg-flex note-icon">Connexion</p></i>
-
-                            </a>
-                        </li>
-
-                    <?php endif; ?>
-                </ul>
-                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center mx-2" type="button" data-toggle="horizontal-menu-toggle">
-                    <i class="fa-solid fa-bars text-dark"></i>
-                </button>
-            </div>
+                <?php endif; ?>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center mx-2" type="button" data-toggle="horizontal-menu-toggle">
+                <i class="fa-solid fa-bars text-dark"></i>
+            </button>
         </div>
-    </nav>
+    </div>
+</nav>
+
+
     <nav class="bottom-navbar bg-success">
         <div class="container">
             <ul class="nav page-navigation">

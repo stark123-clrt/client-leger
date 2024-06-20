@@ -29,29 +29,31 @@ if(isset($_POST["recherche"])){
                     <div class="grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                                <h2 class="text-center">Recherche</h2>
+                            
+                                <!-- <h2 class="text-center">Recherche</h2>-->
+                                <!-- Fin du contenu principal -->
 
-                                <form method="post" action="">
+                                 <!-- <form method="post" action="">
                                     <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <select class="form-select" name="categorie">
-                                                    <?php
-                                                    $req=$pdo->query("select * from categorie");
-                                                    $resultat=$req->fetchAll();
-                                                    foreach($resultat as $categorie){
-                                                        echo "<option value='".$categorie["idc"]."'>".$categorie["nomCat"]. "</option><br>";
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <input type="text" class="form-control" placeholder="Entrer le titre de l'annonce" name="recherchetext" aria-label="Text input with dropdown button">
-                                            <div class="input-group-append">
-                                                <input type="submit" class="btn btn-success" name="recherche" value="Rechercher">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                //         <div class="input-group">
+                                //             <div class="input-group-prepend">
+                                //                 <select class="form-select" name="categorie">
+                                //                     <?php
+                                //                     $req=$pdo->query("select * from categorie");
+                                //                     $resultat=$req->fetchAll();
+                                //                     foreach($resultat as $categorie){
+                                //                         echo "<option value='".$categorie["idc"]."'>".$categorie["nomCat"]. "</option><br>";
+                                //                     }
+                                //                     ?>
+                                //                 </select>
+                                //             </div>
+                                //             <input type="text" class="form-control" placeholder="Entrer le titre de l'annonce" name="recherchetext" aria-label="Text input with dropdown button">
+                                //             <div class="input-group-append">
+                                //                 <input type="submit" class="btn btn-success" name="recherche" value="Rechercher">
+                                //             </div>
+                                //         </div>
+                                //     </div>
+                                // </form>  -->
 
                                 <div class="text-center">
                                     <a class="btn btn-success"  href="<?php if(isset($uid)): ?>nvAnnonces.php <?php else: ?>connexion.php <?php endif; ?>">

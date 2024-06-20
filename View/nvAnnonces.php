@@ -55,7 +55,7 @@ if(isset($_POST["btn"])){ // si le bouton ets cliqué, les informations écrites
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>Nouvelle annonce - Great Deal</title>
+    <title>Nouvelle annonce - Electro-Annonce</title>
     <?php include 'include/header.php'; ?>  <!-- header présent sur toutes les pages (connexion avec bootstrap) -->
 </head>
 <body style="background-color: #f2edf3">

@@ -43,16 +43,48 @@ if(isset($_POST["send"])){
 // egalement dans la table message ou on enregistre les id, le contenu et le temps
 
 ?> <!-- élément php présent sur toutes les pages (vérification si session ouverte, connexion bdd, etc...) -->
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <title>Detail annonce Electro-Annonce</title>
-    <?php include 'include/header.php'; ?>  <!-- header présent sur toutes les pages (connexion avec bootstrap) -->
+    <?php include 'include/header.php'; ?>
+    <style>
+        body {
+            background-color: #f2edf3;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .badge-pill {
+            margin-right: 5px;
+        }
+        .favorite-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .favorite-button .btn {
+            border-radius: 50%;
+            padding: 10px;
+        }
+    </style>
 </head>
-<body style="background-color: #f2edf3">
+<body>
 <div class="container-scroller">
-    <?php include 'include/navigation.php'; ?> <!-- bar de navigation présent sur toute les pages-->
-    <!-- partial -->
+    <?php include 'include/navigation.php'; ?>
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel">
             <div class="content-wrapper container">
@@ -67,15 +99,11 @@ if(isset($_POST["send"])){
                                     <div class="sale-badge bg-gradient-success text-center font-weight-bold text-light p-2">Nouveauté</div>
                                 </div>
                             <?php endif; ?>
-                            <!-- si l'annonce est posté il y a moins d'une semaine soit 604800 secondes, on ajoute 'nouveauté à l'annonce'
-                            ce badge disparaitra lorsque l'annonce est présente depuis plus d'une semaine  -->
                             <div class="card-body">
-                                <div class='card rounded hover-shadow'>
-                                    <div class="card">
-                                        <img src='../<?=$photo?>' width='350'>
-                                        <br>
-                                        <span class="favorite-button"><a class="btn btn-danger" href="<?php if(isset($uid)): ?> action_get.php?action=ajoutFavori&ida=<?= $ida ?>&idu=<?= $uid ?>&route=location:detail.php?ida=<?=$ida?><?php else: ?>connexion.php<?php endif; ?>">
-                                    <!-- sur ce bouton la possibilté d'ajouter au favoris, il renvoie à la page action_get : où la requete est effectué -->
+                                <img src='../<?=$photo?>' alt='Image de l'annonce'>
+                                <br>
+                                <span class="favorite-button">
+                                    <a class="btn btn-danger" href="<?php if(isset($uid)): ?>action_get.php?action=ajoutFavori&ida=<?= $ida ?>&idu=<?= $uid ?>&route=location:detail.php?ida=<?=$ida?><?php else: ?>connexion.php<?php endif; ?>">
                                     <?php
                                     if(isset($uid)){
                                         $verif = $pdo->prepare("SELECT * from favoris where ida = ? and idu = ?");
@@ -88,83 +116,55 @@ if(isset($_POST["send"])){
                                     }else{  ?>
                                         <i style="color: #ff0000" class="fa-regular fa-heart"></i>
                                     <?php } ?>
-                                                <?=$favoris?></a></span>
-                                    </div>
-                                    <!-- $uid : on stocke l'id de la personne qui est actuellement connecté
-                                    on demande à la bdd l'etat du compteur pour l'id annonce et l'id annonce.
-
-                                    Si il est egale à 0 alors le coeur est vide sinon le coeur est rempli et cela signifie que l'id l'a deja ajoute dans ces favoris 
-                                    puis on affiche favoris : 1 ou 0 
-                                    -->
-                                </div>
+                                    <?=$favoris?></a>
+                                </span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-8 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                                <div class='card rounded hover-shadow'>
-                                    <div class="card">
-                                        <h2><?=$titre?><p class="float-end h3"><?= number_format($prix, 0, ',', ' ')  ?> €</p></h2>
-                                        <ul class="product-variation">
-                                            <?php if ($categorie==1): ?>
-                                                <a class="badge badge-pill badge-primary" href="categorie.php?idcategorie=<?=$categorie?>">Téléphones mobiles<i class="fa-solid fa-heart mx-2"></i></a>
-                                            <?php elseif ($categorie==2): ?>
-                                                <a class="badge badge-pill badge-warning">Ordinateurs portables<i class="fa-solid fa-user-secret mx-2"></i></a>
-                                            <?php elseif ($categorie==3): ?>
-                                                <a class="badge badge-pill badge-info">Ordinateurs de bureau<i class="fa-solid fa-rocket mx-2"></i></a>
-                                            <?php elseif ($categorie==4): ?>
-                                                <a class="badge badge-pill badge-danger">Tablettes<i class="fa-solid fa-feather-pointed mx-2"></i></a>
-                                            <?php else: ?>
-                                                <a class="badge badge-pill badge-success">Accessoires électroniques<i class="fa-solid fa-earth-europe mx-2"></i></a>
-                                            <?php endif; ?>
-                                            <!-- selon la catégorie, un different badge va s'afficher  -->
-
-
-                    
-
-                                            <span class="badge badge-pill badge-info"><?=$etat?> &nbsp<i class="fa-solid fa-thumbs-up"></i></span>
-                                            <!-- les informations récuperer son afficher dans un badge -->
-
-
-                                            <!--  si l'annonce est en format poche alors affichage d'un badge sinon different badge  -->
-
-                                            <?php if ($livraison==1): ?>
-                                                <span class="badge badge-pill badge-success">Livraison &nbsp<i class="fa-solid fa-truck"></i></span>
-                                            <?php else: ?>
-                                                <span class="badge badge-pill badge-sucess">Main propre &nbsp<i class="fa-solid fa-handshake"></i></span>
-                                            <?php endif; ?>
-                                            <!--  si l'annonce est en livraison alors affichage d'un badge sinon different badge pour en main propre -->
-
-                                        </ul>
-                                        <p><?=$detail?></p>
-                                        <p><span class="badge badge-gradient-dark" ><i class="fa-solid fa-eye"></i> <?= $vue ?></span></p>
-                                        <p class="card-text"><small class="text-muted float-start"><?=$nom?> <?=$prenom?></small><small class="text-muted"><br><?=$nomVille?><br><?=$date?></small></p>
-                                        <p>
-                                        <?php if(isset($uid)): ?>
-                                            <?php
-                                            $verif = $pdo->prepare("SELECT * from conversation where idan = ? and idu = ?");
-                                            $verif->execute(array($ida, $uid));
-                                            if($verif->rowCount() == 0){  ?>
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal-4" data-whatever="@fat">Contacter le vendeur</button>
-                                            <?php }else{
-                                                $idc = $verif->fetch();
-                                                ?>
-                                            <a href="message.php?idc=<?= $idc["idc"]?>" class="btn btn-success">Contacter le vendeur</a>
-                                            <?php } ?>
-                                        <?php else: ?>
-                                            <a href="connexion.php" class="btn btn-success">Contacter le vendeur</a>
-                                        <?php endif; ?>
-                                        <!-- si la personne est connecté alors on demande a la BDD si il y a une conversation en cours sur l'id de l'annonce et avec l'user :  possibilité de contacter le vendeur en cliquant sur le bouton
-                                        sinon la personne n'est pas connecté alors on renvoie à la page connexion pour contacter ensuite le vendeur
-                                    -->
-                                    </div>
-
-                                </div>
+                                <h2><?=$titre?><p class="float-end h3"><?= number_format($prix, 0, ',', ' ')  ?> €</p></h2>
+                                <ul class="product-variation">
+                                    <?php if ($categorie==1): ?>
+                                        <a class="badge badge-pill badge-primary" href="categorie.php?idcategorie=<?=$categorie?>">Téléphones mobiles<i class="fa-solid fa-heart mx-2"></i></a>
+                                    <?php elseif ($categorie==2): ?>
+                                        <a class="badge badge-pill badge-warning">Ordinateurs portables<i class="fa-solid fa-user-secret mx-2"></i></a>
+                                    <?php elseif ($categorie==3): ?>
+                                        <a class="badge badge-pill badge-info">Ordinateurs de bureau<i class="fa-solid fa-rocket mx-2"></i></a>
+                                    <?php elseif ($categorie==4): ?>
+                                        <a class="badge badge-pill badge-danger">Tablettes<i class="fa-solid fa-feather-pointed mx-2"></i></a>
+                                    <?php else: ?>
+                                        <a class="badge badge-pill badge-success">Accessoires électroniques<i class="fa-solid fa-earth-europe mx-2"></i></a>
+                                    <?php endif; ?>
+                                    <span class="badge badge-pill badge-info"><?=$etat?> &nbsp<i class="fa-solid fa-thumbs-up"></i></span>
+                                    <?php if ($livraison==1): ?>
+                                        <span class="badge badge-pill badge-success">Livraison &nbsp<i class="fa-solid fa-truck"></i></span>
+                                    <?php else: ?>
+                                        <span class="badge badge-pill badge-success">Main propre &nbsp<i class="fa-solid fa-handshake"></i></span>
+                                    <?php endif; ?>
+                                </ul>
+                                <p><?=$detail?></p>
+                                <p><span class="badge badge-gradient-dark"><i class="fa-solid fa-eye"></i> <?= $vue ?></span></p>
+                                <p class="card-text"><small class="text-muted float-start"><?=$nom?> <?=$prenom?></small><small class="text-muted"><br><?=$nomVille?><br><?=$date?></small></p>
+                                <p>
+                                <?php if(isset($uid)): ?>
+                                    <?php
+                                    $verif = $pdo->prepare("SELECT * from conversation where idan = ? and idu = ?");
+                                    $verif->execute(array($ida, $uid));
+                                    if($verif->rowCount() == 0){  ?>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal-4" data-whatever="@fat">Contacter le vendeur</button>
+                                    <?php }else{
+                                        $idc = $verif->fetch();
+                                        ?>
+                                    <a href="message.php?idc=<?= $idc["idc"]?>" class="btn btn-success">Contacter le vendeur</a>
+                                    <?php } ?>
+                                <?php else: ?>
+                                    <a href="connexion.php" class="btn btn-success">Contacter le vendeur</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-
                     <div class="modal fade" id="exampleModal-4" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -175,7 +175,6 @@ if(isset($_POST["send"])){
                                             <label for="message-text" class="col-form-label">Message:</label>
                                             <textarea class="form-control" name="message" id="message-text"></textarea>
                                         </div>
-
                                 </div>
                                 <div class="modal-footer">
                                     <input type="submit" class="btn btn-success" name="send" value="Envoyer message">
@@ -185,16 +184,13 @@ if(isset($_POST["send"])){
                             </div>
                         </div>
                     </div>
-                    <!-- formulaire renvoyant à la methode post afin de faire requete dans le if(isset) -->
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php include 'include/footer.php'; ?> <!-- footer présent sur toute les pages -->
-<?php include 'include/script.php'; ?> <!-- script présent sur toute les pages (connexion avec bootstrap) -->
-
+<?php include 'include/footer.php'; ?>
+<?php include 'include/script.php'; ?>
 </body>
 </html>
